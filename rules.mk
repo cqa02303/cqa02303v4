@@ -1,0 +1,5 @@
+#POINTING_DEVICE_DRIVER=analog_joystick
+POINTING_DEVICE_DRIVER=custom
+
+#AUDIO_ENABLE = yes
+#AUDIO_DRIVER = pwm_hardware

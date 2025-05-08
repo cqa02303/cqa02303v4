@@ -1,0 +1,11 @@
+VIA_ENABLE = yes
+VIAL_ENABLE = yes
+VIALRGB_ENABLE = yes
+
+OLED_ENABLE = yes
+OLED_TRANSPORT=i2c
+OLED_DRIVER=ssd1306
+
+ANALOG_DRIVER_REQUIRED = yes
+
+SRC += oled.c encoder.c joystick2.c
