@@ -8,8 +8,14 @@
 #include <stdlib.h>
 #include "pointing_device_internal.h"
 
+// Set Parameters
+#ifndef ANALOG_JOYSTICK_AUTO_AXIS
 uint16_t minAxisValue = ANALOG_JOYSTICK_AXIS_MIN;
 uint16_t maxAxisValue = ANALOG_JOYSTICK_AXIS_MAX;
+#else
+int16_t minAxisValues[HFJS_STKS];
+int16_t maxAxisValues[HFJS_STKS];
+#endif
 uint8_t maxCursorSpeed = ANALOG_JOYSTICK_SPEED_MAX;
 uint8_t maxWheelSpeed  = ANALOG_WHEEL_SPEED_MAX;
 uint8_t speedRegulator = ANALOG_JOYSTICK_SPEED_REGULATOR; // Lower Values Create Faster Movement
@@ -103,7 +109,7 @@ report_mouse_t analog_joystick_read(void) {
 
     for (int i = 0; i < HFJS_STKS; i++){
         position = analogReadPin(adpins[i]);
-        coordinate = inverts[i] * axisCoordinate(position, origins[i], 0);
+        coordinate = inverts[i] * axisCoordinate(position, origins[i], i);
         positions[i] = position;
         coordinates[i] = coordinate;
         for (int n = 0; n < 2; n++){
@@ -210,6 +216,12 @@ void pointing_device_driver_init(void) {
     // GPIO初期化した後少し待ってから初期値を得るようにする
     wait_us(10);
     pointing_device_driver_set_adjust();
+#ifdef ANALOG_JOYSTICK_AUTO_AXIS
+    for (int i = 0; i < HFJS_STKS; i++){
+        minAxisValues[i] = origins[i] - 100;
+        maxAxisValues[i] = origins[i] + 100;
+    }
+#endif
 }
 
 uint16_t lastCursor = 0;                    // 最終取得時刻
