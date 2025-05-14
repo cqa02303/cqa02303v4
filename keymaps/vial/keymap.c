@@ -21,16 +21,17 @@
 
 // マトリクス位置から現在のキーコードを得る
 uint16_t matrix_to_keycode(uint8_t row, uint8_t col){
-    uint8_t layer = get_highest_layer(layer_state | default_layer_state);
     keypos_t key = (keypos_t){
         .row = row,
         .col = col
     };
-    // キーに登録されたキーコードを取得(透過キーの場合は追跡して確認する)
     uint16_t code = KC_TRNS;
-    for(; (layer >=0) && (code == KC_TRNS); layer--){
-        // BUG: offになっているレイヤは読み飛ばさないといけない
-        code = keymap_key_to_keycode(layer, key);
+
+    // キーに登録されたキーコードを取得(透過キーの場合は追跡して確認する)
+    for(uint8_t layer = MAX_LAYER; (layer >=0) && (code == KC_TRNS); layer--){
+        if ((layer_state | default_layer_state) & ((layer_state_t)1 << layer)) {
+            code = keymap_key_to_keycode(layer, key);
+        }
     }
     return code;
 }
